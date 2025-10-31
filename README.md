@@ -39,7 +39,7 @@ Before execution, you *must* update the API token in config.yaml with your curre
 ```yaml
 # config.yaml Snippet
 api:
-  token: "702e219d-fc9c-449b-82f7-519b13fbdd56" 
+  token: "<token>" # Paste your token here 
   headers:
     # ...
-    Authorization: "Bearer 702e219d-fc9c-449b-82f7-519b13fbdd56"
+    Authorization: "Bearer <token>" # Paste your token here
