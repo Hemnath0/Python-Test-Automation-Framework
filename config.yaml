@@ -1,0 +1,58 @@
+api:
+  base_url: "https://avi-mock-api-production.up.railway.app"
+  token: "702e219d-fc9c-449b-82f7-519b13fbdd56" # REPLACE with your actual token
+  headers:
+    Content-Type: "application/json"
+    Authorization: "Bearer 702e219d-fc9c-449b-82f7-519b13fbdd56" # REPLACE with your actual token
+
+# Test Execution Settings
+settings:
+  parallel_execution_count: 2 
+  
+# Test Cases Definition (Modular Test Structure)
+test_cases:
+  - id: "VS_Disable_Test_1"
+    target_vs_name: "backend-vs-t1r_1000-1"
+    workflow:
+      # Stage 1: Pre-Fetcher (Global, executed once before all tests)
+      
+      # Stage 2: Pre-Validation
+      # Stage 2a: Setup - Ensure VS is enabled before test
+      - stage: "Setup: Enable VS"
+        type: "PUT"
+        endpoint: "/api/virtualservice/{uuid}"
+        payload:
+          enabled: true
+        expected_status: 200
+
+      # Stage 2b: Pre-Validation
+      - stage: "Pre-Validation"
+        type: "GET"
+        endpoint: "/api/virtualservice/{uuid}"
+        expected_status: 200
+        validation_check:
+          enabled: true
+      
+      # Stage 3: Task / Trigger
+      - stage: "Task / Trigger"
+        type: "PUT"
+        endpoint: "/api/virtualservice/{uuid}"
+        payload:
+          enabled: false
+        expected_status: 200
+      
+      # Stage 4: Post-Validation
+      - stage: "Post-Validation"
+        type: "GET"
+        endpoint: "/api/virtualservice/{uuid}"
+        expected_status: 200
+        validation_check:
+          enabled: false
+
+  - id: "Dummy_Parallel_Test_2"
+    target_vs_name: "backend-vs-t1r_1000-1"
+    workflow:
+      - stage: "MOCK_CHECK_SSH"
+        type: "MOCK_SSH"
+      - stage: "MOCK_CHECK_RDP"
+        type: "MOCK_RDP"

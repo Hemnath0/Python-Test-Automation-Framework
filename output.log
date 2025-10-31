@@ -1,0 +1,59 @@
+Configuration loaded successfully from config.yaml.
+DEBUG: config loaded, keys= ['api', 'settings', 'test_cases']
+# 1. PRE-FETCHER STAGE (Global Setup) #
+DEBUG: calling /api/virtualservice
+  -> API Call: GET https://avi-mock-api-production.up.railway.app/api/virtualservice
+Pre-Fetcher: Found 25 Virtual Services.
+DEBUG: calling /api/serviceengine
+  -> API Call: GET https://avi-mock-api-production.up.railway.app/api/serviceengine
+Pre-Fetcher: Found 3 Service Engines.
+DEBUG: calling /api/tenant
+  -> API Call: GET https://avi-mock-api-production.up.railway.app/api/tenant
+Pre-Fetcher: Found 2 Tenants.
+
+Pre-Fetcher Summary
+VS Count: 25, SE Count: 3, Tenant Count: 2
+Identified Target VS: 'backend-vs-t1r_1000-1' with UUID: virtualservice-2ccaddb9-a3be-458e-9ad5-c0be41ce28e3
+# 2. PARALLEL TASK EXECUTION #
+DEBUG: starting ThreadPoolExecutor with 2 workers
+
+Starting Test Case: VS_Disable_Test_1
+
+Stage: Setup: Enable VS (PUT) -
+  -> API Call: PUT https://avi-mock-api-production.up.railway.app/api/virtualservice/virtualservice-2ccaddb9-a3be-458e-9ad5-c0be41ce28e3
+Starting Test Case: Dummy_Parallel_Test_2
+
+Stage: MOCK_CHECK_SSH (MOCK_SSH) -
+    [MOCK_SSH] Connecting to host: backend-vs-t1r_1000-1...
+
+    [MOCK_SSH] Successfully connected (mock).
+
+Stage: MOCK_CHECK_RDP (MOCK_RDP) -
+    [MOCK_RDP] Validating remote connection for host: backend-vs-t1r_1000-1...
+  [PASS] Status Code: 200 matches expected 200.
+
+Stage: Pre-Validation (GET) -
+  -> API Call: GET https://avi-mock-api-production.up.railway.app/api/virtualservice/virtualservice-2ccaddb9-a3be-458e-9ad5-c0be41ce28e3
+    [MOCK_RDP] Remote connection validated (mock).
+
+  [PASS] Status Code: 200 matches expected 200.
+    [PASS] Validation: Found 'enabled': True
+
+Stage: Task / Trigger (PUT) -
+  -> API Call: PUT https://avi-mock-api-production.up.railway.app/api/virtualservice/virtualservice-2ccaddb9-a3be-458e-9ad5-c0be41ce28e3
+  [PASS] Status Code: 200 matches expected 200.
+
+Stage: Post-Validation (GET) -
+  -> API Call: GET https://avi-mock-api-production.up.railway.app/api/virtualservice/virtualservice-2ccaddb9-a3be-458e-9ad5-c0be41ce28e3
+  [PASS] Status Code: 200 matches expected 200.
+    [PASS] Validation: Found 'enabled': False
+
+# 3. FINAL RESULTS SUMMARY #
+Test Case ID: VS_Disable_Test_1 | Status: SUCCESS
+  - Setup: Enable VS: PASS
+  - Pre-Validation: PASS
+  - Task / Trigger: PASS
+  - Post-Validation: PASS
+Test Case ID: Dummy_Parallel_Test_2 | Status: SUCCESS
+  - MOCK_CHECK_SSH: MOCK_SUCCESS
+  - MOCK_CHECK_RDP: MOCK_SUCCESS
