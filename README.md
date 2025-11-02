@@ -1,45 +1,78 @@
 # VMware Avi Load Balancer: Python Test Automation Framework
 
-This project implements a Python-based, configuration-driven, and parallelized test automation framework for interacting with the VMware Avi Load Balancer (Mock) API.
+A Python-based, configuration-driven, and parallelized test automation framework for interacting with the *VMware Avi Load Balancer (Mock API)*.
 
-## Objectives Met
+---
 
-The framework is designed to fulfill the following requirements:
+## Features
 
-* *Language:* Built entirely in Python.
-* *Configuration:* All parameters (endpoints, credentials, test flow) are stored and dynamically parsed from config.yaml.
-* *Parallelism:* Utilizes Python's concurrent.futures.ThreadPoolExecutor to execute multiple test cases concurrently.
-* *Modularity:* Logic is separated into main.py (orchestration) and avi_api_utils.py (helpers, API calls, and mocks).
-* *Workflow:* Implements the required 4-stage execution model (Pre-Fetcher, Pre-Validation, Task/Trigger, Post-Validation).
-* *Mocks:* Includes stubbed methods for SSH and RDP.
+* *Language:* Python 3.x
+* *Config-Driven:* Uses config.yaml for endpoints, credentials, and test flow.
+* *Parallel Execution:* Runs multiple tests concurrently with ThreadPoolExecutor.
+* *Modular Design:*
 
-## 🚀 Getting Started
+  * main.py → orchestrates test execution
+  * avi_api_utils.py → handles API logic and helper methods
+* *4-Stage Workflow:* Pre-Fetcher → Pre-Validation → Task/Trigger → Post-Validation
+* *Mocks:* Includes stubbed SSH and RDP methods.
 
-### 1. Prerequisites
+---
 
-* Python 3.x installed.
-* The required Python libraries.
+## Setup
 
-### 2. Setup and Installation
+1. *Clone Repo*
 
-1.  *Clone/Download:* Place all files (main.py, avi_api_utils.py, config.yaml, requirements.txt) into a single directory.
-2.  *Install Dependencies:* Open your terminal in the project directory and run:
-    bash
-    pip install -r requirements.txt
-    
+   bash
+   git clone https://github.com/Hemnath0/Python-Test-Automation-Framework.git
+   cd Python-Test-Automation-Framework
+   
+2. *Install Dependencies*
 
-### 3. Configuration
+   bash
+   pip install -r requirements.txt
+   
+3. *Update Token*
+   Edit config.yaml and replace the placeholder token with your active session token:
 
-The core of the framework is the **config.yaml** file.
+   yaml
+   api:
+     token: "your-token-here"
+     headers:
+       Authorization: "Bearer your-token-here"
+   
 
-*Crucial Step: Update the Bearer Token*
+---
 
-Before execution, you *must* update the API token in config.yaml with your current active session token (e4f1aa4a-2f43-40c6-868d-823bb2633b64).
+## Jenkins CI/CD Pipeline Integration
 
-```yaml
-# config.yaml Snippet
-api:
-  token: "<token>" # Paste your token here 
-  headers:
-    # ...
-    Authorization: "Bearer <token>" # Paste your token here
+### Jenkins Setup
+
+Run Jenkins in Docker with root privileges:
+
+bash
+docker run -d --name jenkins_server \
+  -p 8080:8080 -p 50000:50000 \
+  -v /var/run/docker.sock:/var/run/docker.sock \
+  --user root jenkins/jenkins:lts-jdk11
+
+
+Then open [http://localhost:8080](http://localhost:8080), unlock Jenkins, install suggested plugins, and create an admin user.
+
+### Required Plugins
+
+* *Pipeline*
+* *Git Plugin*
+
+### Pipeline Overview (Jenkinsfile)
+
+| Stage                                  | Description                                                             |
+| -------------------------------------- | ----------------------------------------------------------------------- |
+| *Checkout*                           | Pulls source code from Git.                                             |
+| *Setup Environment & Run Automation* | Creates Python venv, installs dependencies, and executes the framework. |
+
+### Build Triggers
+
+* *Manual:* “Build Now”
+* *Scheduled:* Hourly (H * * * *)
+
+---
